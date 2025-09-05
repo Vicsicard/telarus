@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Variables
     let currentSlide = 0;
     const totalSlides = slides.length;
-    let isNavigating = false; // Flag to prevent rapid navigation
     
     // Initialize
     updateSlideCounter();
+    slides[0].classList.add('active');
     
     // Event Listeners
     prevBtn.addEventListener('click', prevSlide);
@@ -38,97 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Touch Navigation
+    // Simple Touch Navigation
     let touchStartX = 0;
     let touchEndX = 0;
-    let touchStartY = 0;
-    let touchEndY = 0;
-    let isSwiping = false;
     
     document.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-        isSwiping = true;
-    }, { passive: true });
-    
-    document.addEventListener('touchmove', (e) => {
-        if (!isSwiping) return;
-        
-        // Get the current touch position
-        const currentX = e.changedTouches[0].screenX;
-        const currentY = e.changedTouches[0].screenY;
-        
-        // Calculate horizontal and vertical movement
-        const diffX = currentX - touchStartX;
-        const diffY = Math.abs(currentY - touchStartY);
-        
-        // If horizontal swipe is significant and greater than vertical movement
-        // (to avoid interfering with vertical scrolling)
-        if (Math.abs(diffX) > 20 && Math.abs(diffX) > diffY * 1.5) {
-            // Prevent default to stop page scrolling during horizontal swipe
-            e.preventDefault();
-            
-            const currentSlideEl = slides[currentSlide];
-            const direction = diffX < 0 ? -1 : 1;
-            const nextSlideIndex = currentSlide + direction;
-            
-            // Limit the transform amount
-            const transformAmount = Math.min(Math.abs(diffX) * 0.3, 60);
-            
-            // Apply transform to current slide
-            currentSlideEl.style.transform = `translateX(${diffX * 0.3}px)`;
-            currentSlideEl.style.opacity = 1 - Math.min(Math.abs(diffX) * 0.002, 0.3);
-            
-            // If there's a next/prev slide, prepare it too
-            if (nextSlideIndex >= 0 && nextSlideIndex < totalSlides) {
-                const nextSlideEl = slides[nextSlideIndex];
-                nextSlideEl.style.visibility = 'visible';
-                nextSlideEl.style.opacity = Math.min(Math.abs(diffX) * 0.002, 0.3);
-                nextSlideEl.style.transform = `translateX(${direction * (60 - transformAmount)}px)`;
-            }
-        }
-    }, { passive: false });
+    });
     
     document.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-        
-        // Reset any transforms applied during swipe
-        slides.forEach(slide => {
-            slide.style.transform = '';
-            slide.style.opacity = '';
-            if (!slide.classList.contains('active')) {
-                slide.style.visibility = '';
-            }
-        });
-        
         handleSwipe();
-        isSwiping = false;
     });
     
     function handleSwipe() {
         const swipeThreshold = 50;
-        const swipeVerticalThreshold = 80;
-        const swipeVertical = Math.abs(touchEndY - touchStartY);
-        const swipeHorizontal = Math.abs(touchEndX - touchStartX);
-        
-        // Only handle horizontal swipes (ignore diagonal/vertical swipes)
-        // Make sure the horizontal swipe is significantly larger than vertical movement
-        if (swipeHorizontal > swipeThreshold && swipeHorizontal > swipeVertical * 1.5) {
-            // Check if we're not scrolling within a slide content
-            const target = document.elementFromPoint(touchEndX, touchEndY);
-            const slideContent = target.closest('.slide-content');
-            
-            // Only process swipe if we're not in a scrollable content area
-            // or if the content is not scrollable (no overflow)
-            if (!slideContent || 
-                (slideContent.scrollHeight <= slideContent.clientHeight)) {
-                if (touchEndX < touchStartX) {
-                    nextSlide(); // Swipe left
-                } else {
-                    prevSlide(); // Swipe right
-                }
-            }
+        if (touchEndX < touchStartX - swipeThreshold) {
+            nextSlide(); // Swipe left
+        } else if (touchEndX > touchStartX + swipeThreshold) {
+            prevSlide(); // Swipe right
         }
     }
     
@@ -185,15 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function nextSlide() {
         if (currentSlide < totalSlides - 1) {
-            // Prevent rapid clicking by disabling buttons temporarily
-            disableNavigation();
-            
             // Add transition classes
             slides[currentSlide].classList.add('next-out');
-            
-            // Preload next slide for smoother transition
-            slides[currentSlide + 1].style.visibility = 'visible';
-            slides[currentSlide + 1].style.opacity = '0';
             
             setTimeout(() => {
                 slides[currentSlide].classList.remove('active', 'next-out');
@@ -203,23 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     slides[currentSlide].classList.remove('next-in');
                     updateSlideCounter();
-                    enableNavigation();
-                }, 700);
-            }, 700);
+                }, 600);
+            }, 600);
         }
     }
     
     function prevSlide() {
         if (currentSlide > 0) {
-            // Prevent rapid clicking by disabling buttons temporarily
-            disableNavigation();
-            
             // Add transition classes
             slides[currentSlide].classList.add('prev-out');
-            
-            // Preload previous slide for smoother transition
-            slides[currentSlide - 1].style.visibility = 'visible';
-            slides[currentSlide - 1].style.opacity = '0';
             
             setTimeout(() => {
                 slides[currentSlide].classList.remove('active', 'prev-out');
@@ -229,9 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     slides[currentSlide].classList.remove('prev-in');
                     updateSlideCounter();
-                    enableNavigation();
-                }, 700);
-            }, 700);
+                }, 600);
+            }, 600);
         }
     }
     

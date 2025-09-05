@@ -104,9 +104,7 @@ body {
     align-items: center;
     padding: 2rem;
     box-sizing: border-box;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    overflow: hidden;
     background: radial-gradient(1200px 900px at 80% -10%, rgba(139, 92, 246, 0.15), transparent 60%),
                 radial-gradient(1200px 900px at -10% 100%, rgba(16, 185, 129, 0.12), transparent 60%),
                 linear-gradient(135deg, var(--dark), var(--dark-light));
@@ -129,24 +127,6 @@ body {
     width: 100%;
     z-index: 1;
     position: relative;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding-right: 10px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-light) transparent;
-}
-
-.slide-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.slide-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.slide-content::-webkit-scrollbar-thumb {
-    background-color: var(--primary-light);
-    border-radius: 6px;
 }
 
 /* Typography */
