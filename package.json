@@ -1,0 +1,15 @@
+{
+  "name": "ahp-mod-2-presentation",
+  "version": "1.0.0",
+  "description": "AHP Mod 2.0 Interactive Presentation",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
